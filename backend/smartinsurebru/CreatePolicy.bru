@@ -1,0 +1,23 @@
+meta {
+  name: CreatePolicy
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:5000/api/policies
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Health Protect Plan",
+    "type": "Health",
+    "premium": 120.5,
+    "coverage_amount": 100000,
+    "description": "Basic health coverage"
+  }
+  
+  
+}

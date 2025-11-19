@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "SmartInsurebru",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
