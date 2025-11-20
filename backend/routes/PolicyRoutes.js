@@ -11,10 +11,10 @@ const {
 } = require("../Controllers/PolicyController");
 
 
-router.get("/", getAllPolicies);      // GET /api/policies
-router.post("/", createPolicy);       // POST /api/policies
-router.get("/:id", getPolicyById);    // GET /api/policies/:id
-router.put("/:id", updatePolicy);     // PUT /api/policies/:id
-router.delete("/:id", deletePolicy);  // DELETE /api/policies/:id
+router.get("/", getAllPolicies);     
+router.post("/", createPolicy);      
+router.get("/:id", getPolicyById);   
+router.put("/:id", updatePolicy);     
+router.delete("/:id", deletePolicy);  
 
 module.exports = router;

@@ -6,15 +6,17 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 const { createPoliciesTable } = require("./Models/Policy");
-// const { createUsersTable } = require("./Models/User");
-// const { createApplicationsTable } = require("./Models/Application");
+const { createUsersTable } = require("./Models/User");
+const { createApplicationsTable } = require("./Models/Application");
 
 const policyRoutes = require("./routes/PolicyRoutes");
+const userRoutes = require("./routes/UserRoutes")
+const applicationRoutes = require("./routes/ApplicationRoutes")
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 app.use(helmet());
 app.use(morgan("dev"));
@@ -28,16 +30,17 @@ app.get("/", (req, res) => {
 async function initDB() {
   try {
     await createPoliciesTable();
-    // await createUsersTable();
-    // await createApplicationsTable();
+    await createUsersTable();
+    await createApplicationsTable();
     console.log("DB initialized");
   } catch (err) {
     console.error(" DB init error:", err);
   }
 }
 
-// mount routes
 app.use("/api/policies", policyRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/applications",applicationRoutes)
 
 initDB().then(() => {
   app.listen(PORT, () => {

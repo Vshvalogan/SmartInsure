@@ -12,4 +12,4 @@ pool.on("connect", () => {
   console.log("Connected to PostgreSQL");
 });
 
-module.exports = pool;git
+module.exports = pool;
