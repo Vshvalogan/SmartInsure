@@ -1,0 +1,24 @@
+meta {
+  name: UpdateApplication
+  type: http
+  seq: 1
+}
+
+put {
+  url: http://localhost:3000/api/applications/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: 4
+}
+
+body:json {
+  {
+    "status": "approved",
+    "decision_notes": "Everything looks good",
+    "decided_by": 4
+  }
+  
+}

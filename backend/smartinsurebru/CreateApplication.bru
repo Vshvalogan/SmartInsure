@@ -1,0 +1,30 @@
+meta {
+  name: CreateApplication
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/api/applications
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "user_id": 2,
+    "policy_id": 5,
+    "answers": {
+      "marital_status": "Single",
+      "dependents": 0,
+      "age": 30,
+      "income": 4000,
+      "risk_level": "medium",
+      "medical_conditions": "none",
+      "smoker": "no"
+    }
+  }
+  
+  
+  
+}
