@@ -6,9 +6,7 @@ const createPolicy = async (req, res) => {
   const { name, type, premium, coverage_amount, description } = req.body;
 
   if (!name || !type || premium == null || coverage_amount == null) {
-    return res
-      .status(400)
-      .json({ msg: "name, type, premium, coverage_amount are required" });
+    return res.status(400).json({ msg: "name, type, premium, coverage_amount are required" });
   }
 
   try {
