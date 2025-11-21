@@ -9,6 +9,7 @@ const { createPoliciesTable } = require("./Models/Policy");
 const { createUsersTable } = require("./Models/User");
 const { createApplicationsTable } = require("./Models/Application");
 
+const authRoutes = require("./routes/AuthRoutes");
 const policyRoutes = require("./routes/PolicyRoutes");
 const userRoutes = require("./routes/UserRoutes")
 const applicationRoutes = require("./routes/ApplicationRoutes")
@@ -41,6 +42,8 @@ async function initDB() {
 app.use("/api/policies", policyRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/applications",applicationRoutes)
+app.use("/api/auth", authRoutes);
+
 
 initDB().then(() => {
   app.listen(PORT, () => {
