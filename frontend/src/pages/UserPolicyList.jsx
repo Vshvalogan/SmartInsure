@@ -1,21 +1,43 @@
-import { Link } from "react-router-dom";
+// src/pages/UserPolicyList.jsx
+import { useEffect, useState } from "react";
+import { getPolicies } from "../services/api.js";
+import PolicyCard from "../components/PolicyCard.jsx";
 
 export default function UserPolicyList() {
-  const policies = [
-    { id: 1, name: "Health Insurance" },
-    { id: 2, name: "Life Insurance" },
-    { id: 3, name: "Vehicle Insurance" },
-  ];
+  const [policies, setPolicies] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function load() {
+      const data = await getPolicies();
+      if (!data) {
+        setError("Unable to load policies.");
+        return;
+      }
+      setPolicies(data);
+    }
+    load();
+  }, []);
+
+  if (error) {
+    return (
+      <div>
+        <h2>Policies</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <h2>Our Policies</h2>
-
-      {policies.map((p) => (
-        <div key={p.id}>
-          <h3>{p.name}</h3>
-          <Link to={`/policy/${p.id}`}>View Details</Link>
-        </div>
+      <h2>Policies</h2>
+      {policies.length === 0 && <p>No policies found.</p>}
+      {policies.map((policy) => (
+        <PolicyCard
+          key={policy.id}
+          policy={policy}
+          to={`/user/policies/${policy.id}`}
+        />
       ))}
     </div>
   );
