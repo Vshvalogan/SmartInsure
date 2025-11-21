@@ -1,6 +1,8 @@
+// backend/Controllers/UserController.js
 const pool = require("../config/db");
+const bcrypt = require("bcryptjs");
 
-// CREATE user
+// CREATE user 
 const createUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -9,11 +11,14 @@ const createUser = async (req, res) => {
   }
 
   try {
+    
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const result = await pool.query(
       `INSERT INTO users (name, email, password, role)
        VALUES ($1, $2, $3, $4)
        RETURNING id, name, email, role, created_at`,
-      [name, email, password, role]
+      [name, email, hashedPassword, role]
     );
 
     return res.status(201).json(result.rows[0]);
@@ -23,7 +28,7 @@ const createUser = async (req, res) => {
   }
 };
 
-// READ all
+// READ all users
 const getAllUsers = async (req, res) => {
   try {
     const result = await pool.query(
@@ -36,7 +41,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// READ one
+// READ one user
 const getUserById = async (req, res) => {
   const { id } = req.params;
 
@@ -57,21 +62,20 @@ const getUserById = async (req, res) => {
   }
 };
 
-// UPDATE
+// UPDATE user 
 const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { name, email, password, role } = req.body;
+  const { name, email, role } = req.body;
 
   try {
     const result = await pool.query(
-      `UPDATE users
-       SET name = $1,
-           email = $2,
-           password = $3,
-           role = $4
-       WHERE id = $5
+      `UPDATE users SET
+         name = COALESCE($1, name),
+         email = COALESCE($2, email),
+         role = COALESCE($3, role)
+       WHERE id = $4
        RETURNING id, name, email, role, created_at`,
-      [name, email, password, role, id]
+      [name, email, role, id]
     );
 
     if (result.rows.length === 0) {
@@ -81,14 +85,11 @@ const updateUser = async (req, res) => {
     return res.status(200).json(result.rows[0]);
   } catch (error) {
     console.error("updateUser error:", error);
-    if (error.code === "23505") {
-      return res.status(400).json({ msg: "Email already exists" });
-    }
     return res.status(500).json({ error: error.message });
   }
 };
 
-// DELETE
+// DELETE user
 const deleteUser = async (req, res) => {
   const { id } = req.params;
 
