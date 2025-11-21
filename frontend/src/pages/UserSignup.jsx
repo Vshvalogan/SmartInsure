@@ -26,7 +26,7 @@ export default function UserSignup() {
       name,
       email,
       password,
-      role: "user", // important: this is a customer account
+      role: "user", 
     };
 
     const result = await signup(userData);
@@ -36,9 +36,8 @@ export default function UserSignup() {
       return;
     }
 
-    // your backend register returns { msg, user }
+    
     setMessage("Signup successful. You can now login.");
-    // simple: redirect to login after short delay
     setTimeout(() => {
       navigate("/login");
     }, 1000);

@@ -29,19 +29,17 @@ export default function AgentSearch() {
     load();
   }, []);
 
-  //Get user name by id
   function getUserName(userId) {
     const user = users.find((u) => u.id === userId);
     return user ? user.name : "Unknown User";
   }
 
-  //Get policy name by id
   function getPolicyName(policyId) {
     const policy = policies.find((p) => p.id === policyId);
     return policy ? policy.name : "Unknown Policy";
   }
 
-  // Filter based on search
+  //! Filter based on search -- later i will chnage to backend
   const filtered = applications.filter((app) => {
     if (!query) return true;
 
