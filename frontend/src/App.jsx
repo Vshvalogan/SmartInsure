@@ -1,48 +1,91 @@
-import { Route, Routes } from "react-router-dom";
+// src/App.jsx
+import { Routes, Route, Navigate } from "react-router-dom";
+import Navbar from "./components/Navbar.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
-import UserHomePage from "./pages/UserHomePage";
-import UserPolicyList from "./pages/UserPolicyList";
-import UserPolicyDetails from "./pages/UserPolicyDetails";
-import UserApplicationForm from "./pages/UserApplicationForm";
-import UserSubmissionSuccess from "./pages/UserSubmissionSuccess";
-import UserDashboard from "./pages/UserDashboard";
-import LoginUser from "./pages/LoginUser";
+import UserHomePage from "./pages/UserHomePage.jsx";
+import LoginUser from "./pages/LoginUser.jsx";
+import UserPolicyList from "./pages/UserPolicyList.jsx";
+import UserPolicyDetails from "./pages/UserPolicyDetails.jsx";
+import UserApplicationForm from "./pages/UserApplicationForm.jsx";
+import UserSubmissionSuccess from "./pages/UserSubmissionSuccess.jsx";
+import UserDashboard from "./pages/UserDashboard.jsx";
+import UserSignup from "./pages/UserSignup.jsx";
 
-import AgentLandingPage from "./pages/AgentLandingPage";
-import AgentLogin from "./pages/AgentLogin";
-import AgentDashboard from "./pages/AgentDashboard";
-import AgentSearch from "./pages/AgentSearch";
-import AgentApplicationDetails from "./pages/AgentApplicationDetails";
 
-import Navbar from "./components/Navbar";
+import AgentLandingPage from "./pages/AgentLandingPage.jsx";
+import AgentLogin from "./pages/AgentLogin.jsx";
+import AgentDashboard from "./pages/AgentDashboard.jsx";
+import AgentSearch from "./pages/AgentSearch.jsx";
+import AgentApplicationDetails from "./pages/AgentApplicationDetails.jsx";
 
 export default function App() {
   return (
-    <>
+    <div>
       <Navbar />
       <Routes>
-        {/* USER ROUTES */}
+        {/* User side */}
         <Route path="/" element={<UserHomePage />} />
-        <Route path="/policies" element={<UserPolicyList />} />
-        <Route path="/policy/:id" element={<UserPolicyDetails />} />
-        <Route path="/apply/:id" element={<UserApplicationForm />} />
-        <Route path="/submitted" element={<UserSubmissionSuccess />} />
-        <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/login" element={<LoginUser />} />
-
-        {/* AGENT ROUTES */}
-        <Route path="/agent" element={<AgentLandingPage />} />
-        <Route path="/agent/login" element={<AgentLogin />} />
-        <Route path="/agent/dashboard" element={<AgentDashboard />} />
-        <Route path="/agent/search" element={<AgentSearch />} />
+        <Route path="/signup" element={<UserSignup />} />
+        <Route path="/user/policies" element={<UserPolicyList />} />
+        <Route path="/user/policies/:id" element={<UserPolicyDetails />} />
         <Route
-          path="/agent/application/:id"
-          element={<AgentApplicationDetails />}
+          path="/user/apply/:policyId"
+          element={
+            <ProtectedRoute allowedRoles={["user"]}>
+              <UserApplicationForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/submitted"
+          element={
+            <ProtectedRoute allowedRoles={["user"]}>
+              <UserSubmissionSuccess />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["user"]}>
+              <UserDashboard />
+            </ProtectedRoute>
+          }
         />
 
-        {/* FALLBACK */}
-        <Route path="*" element={<h2>Page Not Found</h2>} />
+        {/* Agent side */}
+        <Route path="/agent" element={<AgentLandingPage />} />
+        <Route path="/agent/login" element={<AgentLogin />} />
+        <Route
+          path="/agent/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["agent"]}>
+              <AgentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/agent/search"
+          element={
+            <ProtectedRoute allowedRoles={["agent"]}>
+              <AgentSearch />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/agent/applications/:id"
+          element={
+            <ProtectedRoute allowedRoles={["agent"]}>
+              <AgentApplicationDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </>
+    </div>
   );
 }
