@@ -68,21 +68,26 @@ export default function AgentApplicationDetails() {
 
       <h3>Answers</h3>
       <pre>{answersText}</pre>
+      {application.status === "pending" && (
+  <div>
+    <button
+      type="button"
+      onClick={() => handleDecision("approved")}
+      disabled={saving}
+    >
+      Approve
+    </button>
 
-      <button
-        type="button"
-        onClick={() => handleDecision("approved")}
-        disabled={saving}
-      >
-        Approve
-      </button>
-      <button
-        type="button"
-        onClick={() => handleDecision("rejected")}
-        disabled={saving}
-      >
-        Reject
-      </button>
+    <button
+      type="button"
+      onClick={() => handleDecision("rejected")}
+      disabled={saving}
+    >
+      Reject
+    </button>
+  </div>
+)}
+
     </div>
   );
 }
