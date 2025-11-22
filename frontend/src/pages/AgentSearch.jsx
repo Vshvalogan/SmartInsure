@@ -10,24 +10,37 @@ export default function AgentSearch() {
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
 
+  
   useEffect(() => {
-    async function load() {
-      const apps = await getApplications();
+    async function loadStaticData() {
       const usersList = await getUsers();
       const policiesList = await getPolicies();
 
-      if (!apps || !usersList || !policiesList) {
-        setError("Unable to load applications or related data.");
+      if (!usersList || !policiesList) {
+        setError("Unable to load users or policies.");
         return;
       }
 
-      setApplications(apps);
       setUsers(usersList);
       setPolicies(policiesList);
     }
 
-    load();
+    loadStaticData();
   }, []);
+
+
+  useEffect(() => {
+    async function loadApplications() {
+      const apps = await getApplications(query);
+      if (!apps) {
+        setError("Unable to load applications.");
+        return;
+      }
+      setApplications(apps);
+    }
+
+    loadApplications();
+  }, [query]);
 
   function getUserName(userId) {
     const user = users.find((u) => u.id === userId);
@@ -39,63 +52,41 @@ export default function AgentSearch() {
     return policy ? policy.name : "Unknown Policy";
   }
 
-  //! Filter based on search -- later i will chnage to backend
-  const filtered = applications.filter((app) => {
-    if (!query) return true;
-
-    const q = query.toLowerCase();
-    const userName = getUserName(app.user_id).toLowerCase();
-    const policyName = getPolicyName(app.policy_id).toLowerCase();
-
-    return (
-      String(app.id).includes(q) ||
-      String(app.user_id).includes(q) ||
-      String(app.policy_id).includes(q) ||
-      userName.includes(q) ||
-      policyName.includes(q) ||
-      (app.status || "").toLowerCase().includes(q)
-    );
-  });
-
   return (
     <div>
       <h2>Search Applications</h2>
 
       <input
         type="text"
-        placeholder="Search by id, name, user, policy, or status"
+        placeholder="Search by id, user id, policy id, or status"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />
 
       {error && <p>{error}</p>}
 
-      {filtered.length === 0 ? (
+      {applications.length === 0 ? (
         <p>No applications found.</p>
       ) : (
         <table>
           <thead>
             <tr>
-              <th>Applicaiton ID</th>
-              <th>User ID</th>
+              <th>ID</th>
               <th>User</th>
-              <th>Policy ID</th>
               <th>Policy</th>
               <th>Status</th>
               <th>Open</th>
             </tr>
           </thead>
           <tbody>
-            {filtered.map((app) => (
+            {applications.map((app) => (
               <tr key={app.id}>
                 <td>{app.id}</td>
-                <td>{app.user_id}</td>
                 <td>
-                  {getUserName(app.user_id)}
+                  {getUserName(app.user_id)} (id: {app.user_id})
                 </td>
-                <td>{app.policy_id}</td>
                 <td>
-                  {getPolicyName(app.policy_id)}
+                  {getPolicyName(app.policy_id)} (id: {app.policy_id})
                 </td>
                 <td>{app.status}</td>
                 <td>

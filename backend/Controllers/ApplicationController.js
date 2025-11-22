@@ -26,16 +26,40 @@ const createApplication = async (req, res) => {
   }
 };
 
-// READ all applications
+
+
+// GET /api/applications  (optionally with ?search=...)
 const getAllApplications = async (req, res) => {
   try {
+    const search = req.query.search || "";
+
+    if (!search) {
+      const result = await pool.query(
+        "SELECT * FROM applications ORDER BY id DESC"
+      );
+      return res.json(result.rows);
+    }
+
+    const term = `%${search}%`;
+
     const result = await pool.query(
-      "SELECT * FROM applications ORDER BY id"
+      `
+      SELECT *
+      FROM applications
+      WHERE 
+        CAST(id AS TEXT) ILIKE $1
+        OR CAST(user_id AS TEXT) ILIKE $1
+        OR CAST(policy_id AS TEXT) ILIKE $1
+        OR status ILIKE $1
+      ORDER BY id DESC
+      `,
+      [term]
     );
-    return res.status(200).json(result.rows);
+
+    return res.json(result.rows);
   } catch (error) {
     console.error("getAllApplications error:", error);
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
