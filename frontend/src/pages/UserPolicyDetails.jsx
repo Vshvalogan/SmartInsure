@@ -8,6 +8,12 @@ export default function UserPolicyDetails() {
   const [policy, setPolicy] = useState(null);
   const [error, setError] = useState("");
 
+  function formatCurrency(value) {
+    if (value == null) return "-";
+    const num = Number(value);
+    if (Number.isNaN(num)) return value;
+    return `$${num.toFixed(2)}`;
+  }
   useEffect(() => {
     async function load() {
       const data = await getPolicyById(id);
@@ -42,8 +48,8 @@ export default function UserPolicyDetails() {
     <div>
       <h2>{policy.name}</h2>
       <p>Type: {policy.type}</p>
-      <p>Premium: {policy.premium}</p>
-      <p>Coverage: {policy.coverage_amount}</p>
+      <p>Premium: {formatCurrency(policy.premium)} / month</p>
+      <p>Coverage: {formatCurrency(policy.coverage_amount)}</p>
       <p>{policy.description}</p>
       <Link to={`/user/apply/${policy.id}`}>Apply for this policy</Link>
       <br />
