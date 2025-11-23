@@ -66,8 +66,15 @@ export default function AgentApplicationDetails() {
           : "-"}
       </p>
 
-      <h3>Answers</h3>
-      <pre>{answersText}</pre>
+      <h3>Details</h3>
+      <ul>
+        {Object.entries(application.answers || {}).map(([key, value]) => (
+            <li key={key}>
+                <strong>{key}</strong>: {String(value)} 
+            </li>
+        ))}
+      </ul>
+
       {application.status === "pending" && (
   <div>
     <button
