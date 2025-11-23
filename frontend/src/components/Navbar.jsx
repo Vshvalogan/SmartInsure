@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import { Link, useNavigate } from "react-router-dom";
 import { clearAuth, getAuth } from "../services/api.js";
 
@@ -13,38 +12,39 @@ export default function Navbar() {
   };
 
   return (
-    <header>
-      <nav>
-        <Link to="/">SmartInsure</Link> |{" "}
-        <Link to="/user/policies">Policies</Link>{" "}
+    <header className="navbar">
+        <div className="navbar-left">
+            <Link to={!user? "/": user.role === "user" ? "/": "/agent"}className="navbar-brand">
+            <div className="navbar-logo"></div>
+            <span className="navbar-title">SmartInsure</span>
+            </Link>
+        </div>
+
+      <nav className="navbar-links">
+        <Link to="/user/policies">Policies</Link>
+
         {!user && (
           <>
-            {" | "}
-            <Link to="/login">User Login</Link> |{" "}
+            <Link to="/login">User Login</Link>
             <Link to="/agent">Agent</Link>
           </>
         )}
+
         {user && user.role === "user" && (
-          <>
-            {" | "}
-            <Link to="/user/dashboard">My Dashboard</Link>
-          </>
+          <Link to="/user/dashboard">My Dashboard</Link>
         )}
+
         {user && user.role === "agent" && (
           <>
-            {" | "}
-            <Link to="/agent/dashboard">Agent Dashboard</Link> |{" "}
+            <Link to="/agent/dashboard">Agent Dashboard</Link>
             <Link to="/agent/search">Search</Link>
           </>
         )}
+
         {user && (
           <>
-            {" | "}
-            <span>
-              {user.name} ({user.role})
-            </span>
-            {" | "}
-            <button type="button" onClick={handleLogout}>
+            <span className="navbar-user">{user.name} ({user.role})</span>
+            <button type="button" className="logout-btn" onClick={handleLogout}>
               Logout
             </button>
           </>
