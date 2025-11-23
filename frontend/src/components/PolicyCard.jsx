@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 
 export default function PolicyCard({ policy }) {
-  const imgSrc = policy.image_url || policy.image ;
+  const imgSrc = policy.image_url ;
 
   return (
     <div className="policy-card">
