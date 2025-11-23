@@ -38,26 +38,36 @@ export default function UserApplicationForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
-
+  
     const auth = getAuth();
     if (!auth || !auth.user) {
       setError("You must be logged in.");
       return;
     }
+  
 
+    const premium = answers.calculated_premium;
+  
+    if (premium == null || premium === "" || isNaN(Number(premium))) {
+      setError("Please calculate your premium before submitting the application.");
+      return;
+    }
+  
     const body = {
       policy_id: Number(policyId),
       answers,
+      premium: Number(premium),
     };
-
+  
     const result = await createApplication(body);
     if (!result) {
       setError("Failed to submit application.");
       return;
     }
-
+  
     navigate("/user/submitted");
   };
+  
 
   if (!policy) {
     return (
@@ -72,15 +82,25 @@ export default function UserApplicationForm() {
 
   let formComponent = null;
   if (type === "health") {
-    formComponent = <HealthInsuranceForm onChange={handleChange} />;
+    formComponent = (
+      <HealthInsuranceForm policy={policy} answers={answers} onChange={handleChange} />
+    );
   } else if (type === "vehicle") {
-    formComponent = <VehicleInsuranceForm onChange={handleChange} />;
+    formComponent = (
+      <VehicleInsuranceForm policy={policy} answers={answers} onChange={handleChange} />
+    );
   } else if (type === "home") {
-    formComponent = <HomeInsuranceForm onChange={handleChange} />;
+    formComponent = (
+      <HomeInsuranceForm policy={policy} answers={answers} onChange={handleChange} />
+    );
   } else if (type === "travel") {
-    formComponent = <TravelInsuranceForm onChange={handleChange} />;
+    formComponent = (
+      <TravelInsuranceForm policy={policy} answers={answers} onChange={handleChange} />
+    );
   } else if (type === "life") {
-    formComponent = <LifeInsuranceForm onChange={handleChange} />;
+    formComponent = (
+      <LifeInsuranceForm policy={policy} answers={answers} onChange={handleChange} />
+    );
   } else {
     formComponent = <p>Unknown policy type.</p>;
   }
