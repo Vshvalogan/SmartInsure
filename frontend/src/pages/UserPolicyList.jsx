@@ -32,6 +32,7 @@ export default function UserPolicyList() {
     <div>
       <h2>Policies</h2>
       {policies.length === 0 && <p>No policies found.</p>}
+      <div className="policy-grid">
       {policies.map((policy) => (
         <PolicyCard
           key={policy.id}
@@ -39,6 +40,7 @@ export default function UserPolicyList() {
           to={`/user/policies/${policy.id}`}
         />
       ))}
+      </div>
     </div>
   );
 }

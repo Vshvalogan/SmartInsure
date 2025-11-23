@@ -4,6 +4,14 @@ import { Link } from "react-router-dom";
 export default function UserHomePage() {
   return (
     <>
+    <div className="banner-center"> 
+       <img 
+        className="home-banner" 
+        src="/SmartInsureLogo.png" 
+        alt="SmartInsure Banner" 
+        align = "Center"
+      />
+      </div>
       <h1>Welcome to SmartInsure</h1>
       <p>
         Browse insurance policies and submit applications for health, vehicle,

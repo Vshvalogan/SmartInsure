@@ -46,7 +46,6 @@ export default function UserApplicationForm() {
     }
 
     const body = {
-      user_id: auth.user.id,
       policy_id: Number(policyId),
       answers,
     };

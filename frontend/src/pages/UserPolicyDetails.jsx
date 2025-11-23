@@ -51,7 +51,7 @@ export default function UserPolicyDetails() {
       <p>Premium: {formatCurrency(policy.premium)} / month</p>
       <p>Coverage: {formatCurrency(policy.coverage_amount)}</p>
       <p>{policy.description}</p>
-      <Link to={`/user/apply/${policy.id}`}>Apply for this policy</Link>
+      <Link to={`/user/policies/apply/${policy.id}`}>Apply for this policy</Link>
       <br />
       <Link to="/user/policies">Back to policies</Link>
     </div>

@@ -1,60 +1,56 @@
 // src/pages/UserDashboard.jsx
 import { useEffect, useState } from "react";
-import { getApplications, getAuth, getPolicies } from "../services/api.js";
+import { getMyApplications, getAuth } from "../services/api.js";
 
 export default function UserDashboard() {
   const [applications, setApplications] = useState([]);
   const [error, setError] = useState("");
-  const [policies, setPolicies] = useState([]);
-
-  const auth = getAuth();
-  const user = auth?.user;
 
   useEffect(() => {
     async function load() {
-      const apps = await getApplications();
-      const policies = await getPolicies();
-  
-      if (!apps || !policies) {
-        setError("Unable to load applications or policies.");
+      const auth = getAuth();
+      const user = auth?.user;
+
+      if (!user) {
+        setError("You must be logged in to see your applications.");
         return;
       }
-      const app = apps.filter((a) => a.user_id === user.id);
-      setApplications(app);
-      setPolicies(policies);
+
+      const data = await getMyApplications();
+      if (!data) {
+        setError("Unable to load applications.");
+        return;
+      }
+
+      setApplications(data);
     }
-  
-    if (user) load();
-  }, [user]);
-  
-  
+
+    load();
+  }, []); 
+
+  const auth = getAuth();
+  const user = auth?.user;
 
   if (!user) {
     return (
       <div>
         <h2>User dashboard</h2>
-        <p>Not logged in.</p>
+        <p>You must be logged in to see your applications.</p>
       </div>
     );
   }
-
-  function getPolicyName(id) {
-    const policy = policies.find((p) => p.id === id);
-    return policy ? policy.name : "Unknown Policy";
-  }
-  
 
   return (
     <div>
       <h2>{user.name}'s dashboard</h2>
       {error && <p>{error}</p>}
-      {applications.length === 0 && <p>No applications yet.</p>}
+      {applications.length === 0 && !error && <p>No applications yet.</p>}
       {applications.length > 0 && (
         <table>
           <thead>
             <tr>
               <th>Application ID</th>
-              <th>Policy Name</th>
+              <th>Policy ID</th>
               <th>Status</th>
               <th>Submitted</th>
             </tr>
@@ -63,7 +59,7 @@ export default function UserDashboard() {
             {applications.map((app) => (
               <tr key={app.id}>
                 <td>{app.id}</td>
-                <td>{getPolicyName(app.policy_id)}</td>
+                <td>{app.policy_id}</td>
                 <td>{app.status}</td>
                 <td>
                   {app.submitted_at
