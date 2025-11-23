@@ -54,7 +54,7 @@ export const login = async (user) => {
       });
   
       const data = await response.json();
-      console.log("login response data:", data); // 👈 add this
+      console.log("login response data:", data); 
   
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
