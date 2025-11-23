@@ -12,11 +12,9 @@ const {
 
 const { auth, requireRole } = require("../Middleware/AuthMiddleware");
 
-// PUBLIC – list + view
-router.get("/", getAllPolicies);      // anyone can see policies
-router.get("/:id", getPolicyById);    // anyone can see one policy
 
-// PROTECTED – agent only
+router.get("/", getAllPolicies);      
+router.get("/:id", getPolicyById);
 router.post("/", auth, requireRole("agent"), createPolicy);
 router.put("/:id", auth, requireRole("agent"), updatePolicy);
 router.delete("/:id", auth, requireRole("agent"), deletePolicy);

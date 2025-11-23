@@ -12,7 +12,7 @@ const {
 
 const { auth, requireRole } = require("../Middleware/AuthMiddleware");
 
-// all user-management routes are AGENT ONLY
+
 router.post("/", auth, requireRole("agent"), createUser);
 router.get("/", auth, requireRole("agent"), getAllUsers);
 router.get("/:id", auth, requireRole("agent"), getUserById);
