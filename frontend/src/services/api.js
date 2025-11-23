@@ -175,29 +175,44 @@ export const createApplication = async (appData) => {
   
 
 
-export const getApplications = async (search) => {
+  // GET /api/applications?search=&sort=
+  export const getApplications = async (search, sort) => {
+    const baseUrl = import.meta.env.VITE_BACKEND_URL;
     let url = `${baseUrl}/api/applications`;
-    if (search && search.trim() !== "") {
-      const query = encodeURIComponent(search.trim());
-      url = `${url}?search=${query}`;
-    }
+  
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    if (sort) params.append("sort", sort);
+  
+    const qs = params.toString();
+    if (qs) url += `?${qs}`;
+  
     console.log(url);
   
     try {
+      const auth = getAuth(); 
+      const token = auth?.token;
       const response = await fetch(url, {
-        headers: authHeaders(),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
       });
   
       const data = await response.json();
-      console.log("response data:", data);
       if (!response.ok) {
+        console.error("getApplications error:", data);
         throw new Error(`Response status: ${response.status}`);
       }
+  
+      console.log("response data:", data);
       return data;
     } catch (error) {
       console.error(error);
+      return null;
     }
   };
+  
   
 
 export const getApplicationById = async (id) => {
@@ -265,3 +280,28 @@ export const getMyApplications = async () => {
     return null;
   }
 };
+
+export const deleteApplication = async (id) => {
+    const url = `${baseUrl}/api/applications/${id}`;
+    console.log(url);
+  
+    try {
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeaders(),   
+        },
+      });
+  
+      const data = await response.json();
+      if (!response.ok) {
+        console.error("deleteApplication error:", data);
+        throw new Error(`Response status: ${response.status}`);
+      }
+      return data;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  

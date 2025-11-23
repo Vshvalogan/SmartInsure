@@ -1,73 +1,76 @@
 // src/pages/AgentSearch.jsx
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { getApplications, getUsers, getPolicies } from "../services/api.js";
+import { Link , useNavigate } from "react-router-dom";
+import { getApplications } from "../services/api.js";
 
 export default function AgentSearch() {
   const [applications, setApplications] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [policies, setPolicies] = useState([]);
   const [query, setQuery] = useState("");
+  const [sortBy, setSortBy] = useState("id"); 
   const [error, setError] = useState("");
-
-  
+  const navigate = useNavigate();
+ 
   useEffect(() => {
-    async function loadStaticData() {
-      const usersList = await getUsers();
-      const policiesList = await getPolicies();
-
-      if (!usersList || !policiesList) {
-        setError("Unable to load users or policies.");
-        return;
-      }
-
-      setUsers(usersList);
-      setPolicies(policiesList);
-    }
-
-    loadStaticData();
-  }, []);
-
-
-  useEffect(() => {
-    async function loadApplications() {
-      const apps = await getApplications(query);
-      if (!apps) {
+    async function load() {
+      const data = await getApplications("", sortBy);
+      if (!data) {
         setError("Unable to load applications.");
         return;
       }
-      setApplications(apps);
+      setApplications(data);
     }
+    load();
+  }, [sortBy]); 
 
-    loadApplications();
-  }, [query]);
-
-  function getUserName(userId) {
-    const user = users.find((u) => u.id === userId);
-    return user ? user.name : "Unknown User";
+  const handleSearch = async () => {
+    setError("");
+    const data = await getApplications(query, sortBy);
+    if (!data) {
+      setError("Unable to load applications.");
+      return;
+    }
+    setApplications(data);
+  };
+  function handleOpen(id) {
+    navigate(`/agent/applications/${id}`)
   }
-
-  function getPolicyName(policyId) {
-    const policy = policies.find((p) => p.id === policyId);
-    return policy ? policy.name : "Unknown Policy";
-  }
-
   return (
     <div>
-      <h2>Search Applications</h2>
+      <h2>Search applications</h2>
 
-      <input
-        type="text"
-        placeholder="Search by id, user id, policy id, or status"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-      />
+      <div style={{ marginBottom: "10px" }}>
+        <input
+          type="text"
+          placeholder="Search by id, user name, policy name, or status"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
 
-      {error && <p>{error}</p>}
+        <button type="button" onClick={handleSearch} style={{ marginLeft: "8px" }}>
+          Search
+        </button>
+      </div>
 
-      {applications.length === 0 ? (
-        <p>No applications found.</p>
-      ) : (
+      <div style={{ marginBottom: "10px" }}>
+        <label>
+          Sort by:{" "}
+          <select
+            value={sortBy}
+            onChange={(event) => setSortBy(event.target.value)}
+          >
+            <option value="id">ID</option>
+            <option value="user">User name</option>
+            <option value="policy">Policy name</option>
+            <option value="status">Status</option>
+          </select>
+        </label>
+      </div>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {applications.length === 0 && !error && <p>No applications found.</p>}
+
+      {applications.length > 0 && (
         <table>
           <thead>
             <tr>
@@ -79,22 +82,31 @@ export default function AgentSearch() {
             </tr>
           </thead>
           <tbody>
-            {applications.map((app) => (
-              <tr key={app.id}>
-                <td>{app.id}</td>
-                <td>
-                  {getUserName(app.user_id)} (id: {app.user_id})
-                </td>
-                <td>
-                  {getPolicyName(app.policy_id)} (id: {app.policy_id})
-                </td>
-                <td>{app.status}</td>
-                <td>
-                  <Link to={`/agent/applications/${app.id}`}>Details</Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+  {applications.map((app) => (
+    <tr key={app.id}>
+      <td>{app.id}</td>
+
+      {/* USER column */}
+      <td>
+        {app.user_name
+          ? `${app.user_name}`
+          : `(#${app.user_id})`}
+      </td>
+
+      <td>
+        {app.policy_name
+          ? `${app.policy_name}`
+          : `(#${app.policy_id})`}
+      </td>
+
+      <td>{app.status}</td>
+      <td>
+        <button onClick={() => handleOpen(app.id)}>Details</button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </table>
       )}
     </div>

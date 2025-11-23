@@ -1,63 +1,116 @@
 // backend/Controllers/ApplicationController.js
 const pool = require("../config/db");
 
-//CREATE Application
+// CREATE application
 const createApplication = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { policy_id, answers } = req.body;
+    console.log("createApplication body:", req.body);
 
-    if (!policy_id || !answers) {
+    const userId = req.user.id;          
+    const { policy_id, answers, premium } = req.body;
+
+    if (!policy_id || !answers || premium == null) {
       return res.status(400).json({
-        msg: "policy_id and answers are required",
+        msg: "policy_id, answers and premium are required",
       });
     }
 
     const result = await pool.query(
-      `INSERT INTO applications (user_id, policy_id, answers, status)
-       VALUES ($1, $2, $3, 'pending')
+      `INSERT INTO applications (user_id, policy_id, answers, premium)
+       VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [userId, policy_id, answers]
+      [userId, policy_id, answers, premium]
     );
 
-    res.status(201).json(result.rows[0]);
+    return res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error("createApplication error:", error);
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
+
 
 //GET Application
 
 const getMyApplications = async (req, res) => {
-  try {
-    const userId = req.user.id;
-
-    const result = await pool.query(
-      "SELECT * FROM applications WHERE user_id = $1 ORDER BY id DESC",
-      [userId]
-    );
-
-    res.json(result.rows);
-  } catch (error) {
-    console.error("getMyApplications error:", error);
-    res.status(500).json({ error: error.message });
-  }
-};
+    try {
+      const userId = req.user.id;
+  
+      const result = await pool.query(
+        `
+        SELECT 
+          a.*,
+          p.name AS policy_name
+        FROM applications a
+        JOIN policies p
+          ON a.policy_id = p.id
+        WHERE a.user_id = $1
+        ORDER BY a.id DESC
+        `,
+        [userId]
+      );
+  
+      return res.json(result.rows);
+    } catch (error) {
+      console.error("getMyApplications error:", error);
+      return res.status(500).json({ error: error.message });
+    }
+  };
 
 //GET All Application
 
 const getAllApplications = async (req, res) => {
   try {
-    const result = await pool.query(
-      "SELECT * FROM applications ORDER BY id DESC"
-    );
-    res.json(result.rows);
+    const search = req.query.search || "";
+    const sort = req.query.sort || "id"; 
+    let orderBy = "a.id DESC";
+    if (sort === "user") {
+      orderBy = "u.name ASC NULLS LAST, a.id DESC";
+    } else if (sort === "policy") {
+      orderBy = "p.name ASC NULLS LAST, a.id DESC";
+    } else if (sort === "status") {
+      orderBy = "a.status ASC, a.id DESC";
+    }
+
+    const params = [];
+    let whereClause = "";
+
+    if (search) {
+      const term = `%${search}%`;
+      params.push(term);
+
+      whereClause = `
+        WHERE 
+          CAST(a.id AS TEXT) ILIKE $1
+          OR CAST(a.user_id AS TEXT) ILIKE $1
+          OR CAST(a.policy_id AS TEXT) ILIKE $1
+          OR a.status ILIKE $1
+          OR u.name ILIKE $1
+          OR p.name ILIKE $1
+      `;
+    }
+
+    const sql = `
+      SELECT
+        a.*,
+        u.name AS user_name,
+        p.name AS policy_name
+      FROM applications a
+      LEFT JOIN users u ON a.user_id = u.id
+      LEFT JOIN policies p ON a.policy_id = p.id
+      ${whereClause}
+      ORDER BY ${orderBy}
+    `;
+
+    const result = await pool.query(sql, params);
+    return res.json(result.rows);
   } catch (error) {
     console.error("getAllApplications error:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 // GET Application by Id
 const getApplicationById = async (req, res) => {
