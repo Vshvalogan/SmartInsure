@@ -1,8 +1,12 @@
 // src/components/PolicyCard.jsx
 import { Link } from "react-router-dom";
+import { getAuth } from "../services/api.js";
 
 export default function PolicyCard({ policy }) {
-  const imgSrc = policy.image_url ;
+  const imgSrc = policy.image_url;
+
+  const auth = getAuth();
+  const role = auth?.user?.role;   // "user" or "agent"
 
   return (
     <div className="policy-card">
@@ -12,11 +16,6 @@ export default function PolicyCard({ policy }) {
 
       <div className="policy-content">
         <h3 className="policy-title">{policy.name}</h3>
-
-        <p className="policy-desc">
-          {policy.description?.slice(0, 120) ||
-            "Comprehensive insurance coverage."}
-        </p>
 
         <ul className="policy-points">
           <li>✔ Coverage amount: ${policy.coverage_amount}</li>
@@ -28,10 +27,11 @@ export default function PolicyCard({ policy }) {
           <Link className="learn-btn" to={`${policy.id}`}>
             Learn more →
           </Link>
-          <p></p>
-          <Link className="buy-btn" to={`apply/${policy.id}`}>
-            BUY NOW
-          </Link>
+          {role === "user" && (
+            <Link className="buy-btn" to={`apply/${policy.id}`}>
+              BUY NOW
+            </Link>
+          )}
         </div>
       </div>
     </div>
