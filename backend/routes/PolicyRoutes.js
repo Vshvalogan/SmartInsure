@@ -10,11 +10,15 @@ const {
   deletePolicy,
 } = require("../Controllers/PolicyController");
 
+const { auth, requireRole } = require("../Middleware/AuthMiddleware");
 
-router.get("/", getAllPolicies);     
-router.post("/", createPolicy);      
-router.get("/:id", getPolicyById);   
-router.put("/:id", updatePolicy);     
-router.delete("/:id", deletePolicy);  
+// PUBLIC – list + view
+router.get("/", getAllPolicies);      // anyone can see policies
+router.get("/:id", getPolicyById);    // anyone can see one policy
+
+// PROTECTED – agent only
+router.post("/", auth, requireRole("agent"), createPolicy);
+router.put("/:id", auth, requireRole("agent"), updatePolicy);
+router.delete("/:id", auth, requireRole("agent"), deletePolicy);
 
 module.exports = router;

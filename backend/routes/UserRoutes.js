@@ -1,3 +1,4 @@
+// backend/routes/UserRoutes.js
 const express = require("express");
 const router = express.Router();
 
@@ -9,10 +10,13 @@ const {
   deleteUser,
 } = require("../Controllers/UserController");
 
-router.post("/", createUser);        // 👈 IMPORTANT: must use controller
-router.get("/", getAllUsers);
-router.get("/:id", getUserById);
-router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
+const { auth, requireRole } = require("../Middleware/AuthMiddleware");
+
+// all user-management routes are AGENT ONLY
+router.post("/", auth, requireRole("agent"), createUser);
+router.get("/", auth, requireRole("agent"), getAllUsers);
+router.get("/:id", auth, requireRole("agent"), getUserById);
+router.put("/:id", auth, requireRole("agent"), updateUser);
+router.delete("/:id", auth, requireRole("agent"), deleteUser);
 
 module.exports = router;
