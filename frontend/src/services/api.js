@@ -44,25 +44,29 @@ export const signup = async (user) => {
 };
 
 export const login = async (user) => {
-  const url = `${baseUrl}/api/auth/login`;
-  console.log(url);
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
+    const url = `${baseUrl}/api/auth/login`;
+    console.log(url);
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      });
+  
+      const data = await response.json();
+      console.log("login response data:", data); // 👈 add this
+  
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+  
+      return data;
+    } catch (error) {
+      console.error(error);
+      return null;
     }
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
-};
+  };
+  
 
 // authHeader 
 const authHeaders = () => {
@@ -76,20 +80,34 @@ const authHeaders = () => {
 // Users API calls
 
 export const getUsers = async () => {
-    const url = `${baseUrl}/api/users`;
-    console.log(url);
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-  
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
-      return data;
-    } catch (error) {
-      console.error(error);
+  const auth = getAuth();
+  const token = auth?.token;
+
+  const url = `${baseUrl}/api/users`;
+  console.log(url);
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+
+    const data = await response.json();
+    console.log("response data:", data);
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
     }
-  };
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
   
 // Policy API calls
 
@@ -127,45 +145,60 @@ export const getPolicyById = async (id) => {
 
 // Application API calls
 
-export const createApplication = async (application) => {
-  const url = `${baseUrl}/api/applications`;
-  console.log(url);
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify(application),
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
+export const createApplication = async (appData) => {
+    const auth = getAuth();
+    const token = auth?.token;
+  
+    try {
+      const response = await fetch(`${baseUrl}/api/applications`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(appData),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        console.error("createApplication error:", data);
+        return null;
+      }
+  
+      return data;
+    } catch (error) {
+      console.error("createApplication fetch error:", error);
+      return null;
     }
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
-};
+  };
+  
 
-export const getApplications = async () => {
-  const url = `${baseUrl}/api/applications`;
-  console.log(url);
-  try {
-    const response = await fetch(url, {
-      headers: authHeaders(),
-    });
 
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
+export const getApplications = async (search) => {
+    let url = `${baseUrl}/api/applications`;
+    if (search && search.trim() !== "") {
+      const query = encodeURIComponent(search.trim());
+      url = `${url}?search=${query}`;
     }
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
-};
+    console.log(url);
+  
+    try {
+      const response = await fetch(url, {
+        headers: authHeaders(),
+      });
+  
+      const data = await response.json();
+      console.log("response data:", data);
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
 
 export const getApplicationById = async (id) => {
   const url = `${baseUrl}/api/applications/${id}`;
@@ -204,5 +237,31 @@ export const updateApplicationStatus = async (id, updates) => {
     return data;
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const getMyApplications = async () => {
+  const auth = getAuth();
+  const token = auth?.token;
+  const url = `${baseUrl}/api/applications/mine`;
+  console.log(url);
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      console.error("getMyApplications error:", data);
+      throw new Error(`Response status: ${response.status}`);
+    }
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error(error);
+    return null;
   }
 };
