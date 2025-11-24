@@ -1,0 +1,6 @@
+id,name,type,description,premium,coverage_amount,created_at,image_url
+1,Health Protect Plan,Health,Basic health coverage,120.5,100000,2025-11-19 01:22:30.086338,/policies/HealthInsurance.jpeg
+2,Vehicle Secure Plan,Vehicle,Car/Motorcycle accident and damage coverage,85,50000,2025-11-20 01:07:47.636207,/policies/VehicleInsurance.jpeg
+3,Home Shield Plan,Home,"Fire, theft, and natural disaster coverage",150,200000,2025-11-20 01:08:13.86087,/policies/HomeInsurance.jpeg
+4,Travel Safe Plan,Travel,Travel medical and emergency coverage,65,75000,2025-11-20 01:08:24.865667,/policies/TravelInsurance.jpeg
+5,Life Secure Plan,Life,Life risk coverage with family benefits,200,500000,2025-11-20 01:08:33.984723,/policies/LifeInsurance.jpeg

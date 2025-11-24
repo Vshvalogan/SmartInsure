@@ -1,0 +1,4 @@
+id,name,email,password,role,created_at,updated_at
+8,logan,logan@gmail.com,$2b$10$A2RP/TPABowPrQ/tLxdJ/OoqOeTbTS8gwTftfB6leebDbwr/k6XBK,user,2025-11-21 01:21:53.151988,2025-11-24 00:42:31.987721+00
+9,Hello,Hello@gamil.com,$2b$10$lej1ZgdeLu.uWYQzplumX.8C/KP0ewohPdGBwnzOx.cfwvZUswF3O,user,2025-11-21 01:41:10.297105,2025-11-24 00:42:31.987721+00
+10,Ara,ara@gmail.com,$2b$10$0XL/0QVRTJ1ddezRPli5l.KIKnU5eTmYSNlYvGRENEQWOVTZsWUbi,agent,2025-11-21 02:07:21.175948,2025-11-24 00:42:55.148149+00
