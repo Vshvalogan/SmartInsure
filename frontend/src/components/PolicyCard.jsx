@@ -6,7 +6,7 @@ export default function PolicyCard({ policy }) {
   const imgSrc = policy.image_url;
 
   const auth = getAuth();
-  const role = auth?.user?.role;   // "user" or "agent"
+  const role = auth?.user?.role; 
 
   return (
     <div className="policy-card">

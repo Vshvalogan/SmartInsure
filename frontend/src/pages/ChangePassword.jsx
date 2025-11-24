@@ -41,7 +41,7 @@ export default function ChangePassword() {
 
     setMessage("Password updated successfully.");
 
-    // After a short delay, go back to the correct dashboard
+    
     setTimeout(() => {
       if (user?.role === "agent") {
         navigate("/agent/dashboard");

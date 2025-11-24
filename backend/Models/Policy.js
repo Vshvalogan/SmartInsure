@@ -11,7 +11,8 @@ const createPoliciesTable = async () => {
       coverage_amount NUMERIC NOT NULL,
       description TEXT,
       created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
+      updated_at TIMESTAMP DEFAULT NOW(),
+      image_url TEXT
     );
   `);
   console.log(" policies table ready");

@@ -9,9 +9,10 @@ const createUsersTable = async () => {
       email VARCHAR(150) UNIQUE NOT NULL,
       password VARCHAR(200) NOT NULL,
       role VARCHAR(20) NOT NULL CHECK (role IN ('user', 'agent')),
-      created_at TIMESTAMP DEFAULT NOW()
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
     );
-  `);
+  `);         s
   console.log("users table ready");
 };
 

@@ -86,7 +86,6 @@ export default function AgentSearch() {
     <tr key={app.id}>
       <td>{app.id}</td>
 
-      {/* USER column */}
       <td>
         {app.user_name
           ? `${app.user_name}`
