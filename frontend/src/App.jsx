@@ -11,6 +11,7 @@ import UserSubmissionSuccess from "./pages/UserSubmissionSuccess.jsx";
 import UserDashboard from "./pages/UserDashboard.jsx";
 import UserSignup from "./pages/UserSignup.jsx";
 
+import ChangePassword from "./pages/ChangePassword.jsx";
 import AgentLandingPage from "./pages/AgentLandingPage.jsx";
 import AgentLogin from "./pages/AgentLogin.jsx";
 import AgentDashboard from "./pages/AgentDashboard.jsx";
@@ -22,6 +23,7 @@ export default function App() {
     <div className="app-shell">
       <Navbar />
       <Routes>
+        <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/" element={<UserHomePage />} />
         <Route path="/login" element={<LoginUser />} />
         <Route path="/signup" element={<UserSignup />} />

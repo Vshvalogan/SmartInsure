@@ -1,5 +1,6 @@
 // src/pages/UserDashboard.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getMyApplications, getAuth, deleteApplication } from "../services/api.js";
 
 export default function UserDashboard() {
@@ -8,28 +9,29 @@ export default function UserDashboard() {
 
   const auth = getAuth();
   const user = auth?.user;
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function load() {
-      const auth = getAuth();
-      const user = auth?.user;
-  
-      if (!user) {
+      const authNow = getAuth();
+      const userNow = authNow?.user;
+
+      if (!userNow) {
         setError("You must be logged in to see your applications.");
         return;
       }
-  
+
       const data = await getMyApplications();
       if (!data) {
         setError("Unable to load applications.");
         return;
       }
-  
+
       setApplications(data);
     }
-  
+
     load();
-  }, []);    
+  }, []);
 
   if (!user) {
     return (
@@ -42,7 +44,19 @@ export default function UserDashboard() {
 
   return (
     <div>
-      <h2>{user.name}'s dashboard</h2>
+      {/* Account info block */}
+      <h2>User dashboard</h2>
+      <div style={{ marginBottom: "16px" }}>
+        <p><strong>Name:</strong> {user.name}</p>
+        <p><strong>Email:</strong> {user.email}</p>
+        <button
+          type="button"
+          onClick={() => navigate("/change-password")}
+        >
+          Change password
+        </button>
+      </div>
+
       {error && <p>{error}</p>}
       {applications.length === 0 && !error && <p>No applications yet.</p>}
 
@@ -51,10 +65,10 @@ export default function UserDashboard() {
           <thead>
             <tr>
               <th>Application ID</th>
-              <th>Policy</th>       
+              <th>Policy</th>
               <th>Status</th>
               <th>Submitted</th>
-              <th>  </th>        
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -89,7 +103,6 @@ export default function UserDashboard() {
                       Cancel
                     </button>
                   )}
-                  
                 </td>
               </tr>
             ))}

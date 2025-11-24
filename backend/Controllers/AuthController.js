@@ -88,4 +88,49 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+const changePassword = async (req, res) => {
+    try {
+      const userId = req.user && req.user.id;
+      const { currentPassword, newPassword } = req.body;
+  
+      if (!userId) {
+        return res.status(401).json({ msg: "Not authenticated" });
+      }
+  
+      if (!currentPassword || !newPassword) {
+        return res
+          .status(400)
+          .json({ msg: "currentPassword and newPassword are required" });
+      }
+  
+      const result = await pool.query(
+        "SELECT id, password FROM users WHERE id = $1",
+        [userId]
+      );
+  
+      if (result.rows.length === 0) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+  
+      const user = result.rows[0];
+  
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ msg: "Current password is incorrect" });
+      }
+  
+      const hashed = await bcrypt.hash(newPassword, 10);
+  
+      await pool.query(
+        "UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2",
+        [hashed, userId]
+      );
+  
+      return res.json({ msg: "Password updated successfully" });
+    } catch (error) {
+      console.error("changePassword error:", error);
+      return res.status(500).json({ error: error.message });
+    }
+  };
+  
+module.exports = { registerUser, loginUser, changePassword };
