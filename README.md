@@ -77,8 +77,8 @@ Design & Logo Resources
 Logo inspiration and design elements generated with Looka
 https://looka.com/
 
-- Assistance from LLM (ChatGPT) for:
-  - Generating initial CSS ideas 
+Assistance from LLM (ChatGPT) for:
+  -Generating initial CSS ideas 
 
 ## 5.5 Technologies used
 
