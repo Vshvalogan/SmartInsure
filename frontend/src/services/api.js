@@ -304,4 +304,37 @@ export const deleteApplication = async (id) => {
       console.error(err);
     }
   };
+
+// API call for changing password for User and Agent
+
+export async function changePassword(payload) {
+    const auth = getAuth();
+    const token = auth?.token;
+  
+    try {
+      const url = `${baseUrl}/api/auth/change-password`;
+      console.log(url);
+  
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      const data = await res.json().catch(() => null);
+      console.log("changePassword response:", data);
+  
+      if (!res.ok) {
+        throw new Error(data?.msg || `Response status: ${res.status}`);
+      }
+  
+      return data;
+    } catch (err) {
+      console.error("changePassword error:", err);
+      return null;
+    }
+  }
   
